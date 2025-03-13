@@ -27,6 +27,7 @@ function App() {
   // Variables para ejecución paralela
   const [pasoUC1, setPasoUC1] = useState(true);
   const [procesoTerminado, setProcesoTerminado] = useState(false);
+  const [potenciaDetectada, setPotenciaDetectada] = useState(false);
 
   useEffect(() => {
     document.title = "Arquitectura Von Neumann";
@@ -36,18 +37,29 @@ function App() {
     setvector(memoria.contenido);
   }, []);
 
-  // useEffect para ejecutar ambas UCs
+  // useEffect para ejecutar ambas UCs en paralelo
   useEffect(() => {
     if (procesoTerminado) return;
     
-    // Ejecutar UC1
+    // Ejecutar ambas UCs en paralelo
     if (pasoUC1) {
       ejecutarCicloUC1();
-    } 
-    // Ejecutar UC2 en paralelo
-    ejecutarCicloUC2();
+    }
+    
+    // Ejecutar UC2 si está activada
+    if (potenciaDetectada || contador2 > 0) {
+      ejecutarCicloUC2();
+    }
     
   }, [siguiente]);
+
+  // Detectar cuando ambas UCs han terminado
+  useEffect(() => {
+    if (!pasoUC1 && op2?.opNombre === "FIN" && !procesoTerminado) {
+      setProcesoTerminado(true);
+      alert(`Procesamiento paralelo completado. El resultado final es: ${alu2.acumulador}`);
+    }
+  }, [pasoUC1, op2, procesoTerminado]);
 
   // Función para ejecutar un ciclo en la UC1
   const ejecutarCicloUC1 = () => {
@@ -99,6 +111,15 @@ function App() {
       case 4:
         setOp(() => {
           const andom = unidadControl.decode();
+          
+          // Detectar si es una operación de potencia y activar UC2
+          if (andom.opNombre === "^") {
+            console.log("UC1: Símbolo de potencia detectado, activando UC2");
+            setPotenciaDetectada(true);
+            // Sincronizar con UC2 - también mostrar el símbolo en UC2
+            setOp2({ opNombre: "^" });
+          }
+          
           setMemoria((prevMemoria) => ({
             ...prevMemoria,
             registroDirecciones: parseInt(parseInt(andom.operando, 2)),
@@ -132,13 +153,13 @@ function App() {
       //Se realiza la operación indicada en la decodificación de la unidad de control
       //Y se almacena su resultado en el acumulador
       case 7:
-        if (op?.opNombre == "+") {
+        if (op?.opNombre === "+") {
           console.log("UC1: Suma realizada", alu.suma());
         }
-        if (op?.opNombre == "^") {
+        if (op?.opNombre === "^") {
           console.log("UC1: Potencia realizada", alu.potencia());
         }
-        if (op?.opNombre == "S") {
+        if (op?.opNombre === "S") {
           let tpm = [...memoria.contenido];
           tpm[parseInt(op?.operando, 2)] = alu.acumulador;
           setMemoria((prevMemoria) => ({ 
@@ -147,13 +168,10 @@ function App() {
           }));
           console.log("UC1: Almacenado valor", alu.acumulador, "en posición", parseInt(op?.operando, 2));
         }
-        if (op?.opNombre == "...") {
+        if (op?.opNombre === "...") {
           console.log("UC1: Fin de la ejecución");
           setPasoUC1(false);
-          if (!contador2) {
-            setProcesoTerminado(true);
-            alert(`Fin de la ejecución. El resultado decimal es ${alu.acumulador}`);
-          }
+          // No mostramos alerta aquí, ya que ahora se maneja en el useEffect
           break;
         }
         setContador((contador + 1) % 8);
@@ -165,21 +183,22 @@ function App() {
   const ejecutarCicloUC2 = () => {
     console.log(`UC2 case ${contador2}`);
     
-    // No iniciamos la UC2 hasta que la UC1 haya procesado al menos una instrucción
-    if (unidadControl.contadorPrograma <= 1) {
-      return;
-    }
-    
     switch (contador2) {
       case 0:
-        // UC2 trabaja con la dirección 2 (valor 2)
-        setUnidadControl2((prevObj) => {
-          const nuevoObj = Object.create(Object.getPrototypeOf(prevObj));
-          return Object.assign(nuevoObj, prevObj, {
-            contadorPrograma: 2, // Dirección del valor 2
+        // Cuando se detecta potencia en UC1, UC2 comienza inmediatamente
+        if (potenciaDetectada) {
+          // UC2 trabaja con la dirección 2 (valor 2)
+          setUnidadControl2((prevObj) => {
+            const nuevoObj = Object.create(Object.getPrototypeOf(prevObj));
+            return Object.assign(nuevoObj, prevObj, {
+              contadorPrograma: 2, // Dirección del valor 2
+              registroInstrucciones: memoria.registroDatos // Sincronizar con UC1
+            });
           });
-        });
-        setContador2((contador2 + 1) % 8);
+          // Ya sabemos que necesitaremos hacer una potencia al final, mantener el ^
+          setOp2({ opNombre: "^" });
+          setContador2((contador2 + 1) % 8);
+        }
         break;
 
       case 1:
@@ -190,10 +209,11 @@ function App() {
           const valorInicial = memoria.contenido[2];
           console.log("UC2: Cargando valor inicial", valorInicial);
           return Object.assign(nuevoObj, prevObj, {
-            acumulador: 0, // Reseteamos para estar seguros
+            acumulador: 0, 
             registroEntrada: valorInicial
           });
         });
+        setOp2({ opNombre: "..." });
         setContador2((contador2 + 1) % 8);
         break;
 
@@ -206,6 +226,7 @@ function App() {
           });
         });
         console.log("UC2: Primera suma realizada");
+        setOp2({ opNombre: "+" });
         setContador2((contador2 + 1) % 8);
         break;
 
@@ -213,6 +234,8 @@ function App() {
         // Esperar a que UC1 haya calculado 2^2 y lo almacene en memoria (posición 4)
         if (op?.opNombre === "S" && parseInt(op?.operando, 2) === 4) {
           console.log("UC2: Detectado valor 2^2 en memoria");
+          // Establecer decodificador a LOAD para indicar que vamos a cargar un valor
+          setOp2({ opNombre: "..." });
           // Continuar con el siguiente paso
           setContador2((contador2 + 1) % 8);
         }
@@ -229,6 +252,7 @@ function App() {
             registroEntrada: valorPotencia
           });
         });
+        setOp2({ opNombre: "+" });
         setContador2((contador2 + 1) % 8);
         break;
 
@@ -242,6 +266,7 @@ function App() {
             acumulador: resultado
           });
         });
+        setOp2({ opNombre: "S" });
         setContador2((contador2 + 1) % 8);
         break;
 
@@ -254,6 +279,8 @@ function App() {
           contenido: tmpArray
         }));
         console.log("UC2: Almacenado (2^2)+2 =", alu2.acumulador, "en posición 5");
+        // Ahora mostramos que vamos a realizar la potencia final
+        setOp2({ opNombre: "^" });
         setContador2((contador2 + 1) % 8);
         break;
 
@@ -269,23 +296,22 @@ function App() {
         });
         
         // Almacenar el resultado final en la memoria
-        setTimeout(() => {
-          const tmpMemoria = [...memoria.contenido];
-          tmpMemoria[6] = alu2.acumulador;
-          setMemoria((prevMemoria) => ({
-            ...prevMemoria,
-            contenido: tmpMemoria
-          }));
-          console.log("UC2: Resultado final almacenado:", alu2.acumulador);
-          
-          // Solo mostrar el resultado si la UC1 ha terminado
-          if (!pasoUC1) {
-            setProcesoTerminado(true);
-            alert(`Procesamiento paralelo completado. El resultado final es: ${alu2.acumulador}`);
-          }
-        }, 100);
+        const tmpMemoria = [...memoria.contenido];
+        tmpMemoria[6] = alu2.acumulador;
+        setMemoria((prevMemoria) => ({
+          ...prevMemoria,
+          contenido: tmpMemoria
+        }));
         
-        // Detener la UC2
+        console.log("UC2: Resultado final almacenado:", alu2.acumulador);
+        
+        // Marcar que UC2 ha terminado
+        setOp2({ opNombre: "FIN" });
+        
+        // No mostrar alerta aquí, dejar que el useEffect se encargue
+        
+        // Resetear potenciaDetectada pero mantener contador2 en 0
+        setPotenciaDetectada(false);
         setContador2(0);
         break;
     }
@@ -343,7 +369,7 @@ function App() {
       </div>
       
       {/* Indicador de estado */}
-      <div style={{ textAlign: 'center', margin: '10px', padding: '10px', backgroundColor: '#f0f0f0', borderRadius: '5px' }}>
+      <div style={{ textAlign: 'center', margin: '10px', padding: '10px', backgroundColor: '#e3edd2', borderRadius: '5px' }}>
         <h3>Estado de ejecución paralela</h3>
         <p>UC1: {pasoUC1 ? "En ejecución" : "Finalizado"} - Paso: {contador}</p>
         <p>UC2: {contador2 > 0 ? "En ejecución" : "Esperando/Finalizado"} - Paso: {contador2}</p>
