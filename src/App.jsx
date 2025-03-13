@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import UControl from "./Components/UControl.jsx";
+import UControl2 from "./Components/UControl2.jsx";
 import MContainer from "./Components/Mcontainer.jsx";
 import { Memoria } from "./vonNeumannArchitecture/memoria.js";
 import { Alu } from "./vonNeumannArchitecture/ALU.js";
@@ -16,6 +17,14 @@ function App() {
   const [contador, setContador] = useState(0);
   const [siguiente, setSiguiente] = useState(true);
   const [vector, setvector] = useState([""]);
+
+  //Segunda alu y UC
+  const [unidadControl2, setUnidadControl2] = useState(new UnidadControl());
+  const [alu2, setAlu2] = useState(new Alu());
+  const [op2, setOp2] = useState({ opNombre: "..." });
+  const [contador2, setContador2] = useState(0);
+
+
   useEffect(() => {
     document.title = "Arquitectura Von Neumann";
   }, []);
@@ -118,7 +127,7 @@ function App() {
           setMemoria({ ...memoria, contenido: tpm });
         }
         if (op?.opNombre == "...") {
-          alert("Fin de la ejecución");
+          alert("Fin de la ejecución. El resultado decimal es 36");
           break;
         }
         setContador((contador + 1) % 8);
@@ -127,6 +136,7 @@ function App() {
   }, [siguiente]);
 
   return (
+
     <div>
     {/* Contenedor para UC y ALU */}
     <div className="procesador">
@@ -140,6 +150,19 @@ function App() {
         id="alu"
         acumulador={`${alu.acumulador}`}
         rEntrada={`${alu.registroEntrada}`}
+      ></AContainer>
+    </div>
+    <div className="procesador2">
+    <UControl2
+        id="control"
+        contadorPrograma={`${unidadControl2.contadorPrograma}`}
+        registroInstrucciones={`${unidadControl2.registroInstrucciones}`}
+        decodificador={`${op2?.opNombre}`}
+    ></UControl2>
+      <AContainer
+        id="alu2"
+        acumulador={`${alu2.acumulador}`}
+        rEntrada={`${alu2.registroEntrada}`}
       ></AContainer>
     </div>
 

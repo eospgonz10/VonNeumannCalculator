@@ -1,0 +1,59 @@
+/* UControl.css */
+.separador {
+  margin: 40px 0;
+  display: flex;
+  flex-direction: row;
+  color: black; /* Texto blanco para contraste */
+  align-items: flex-end;
+  justify-content: space-evenly;
+  height: 60%;
+  width: 500px;
+  max-width: 500px;
+  text-align: center;
+}
+
+.control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.control p {
+  margin-bottom: 10px;
+  align-items: flex-end;
+  justify-content: space-evenly;
+  height: 20%;
+  width: 285px;
+  max-width: 285px;
+  text-align: center;
+  padding-right: 40px;
+  color: black; /* Texto blanco para contraste */
+}
+
+.decoder {
+  color: black; /* Texto blanco para contraste */
+  background-color: #e3edd2; /* Nuevo color */
+  border: 3px solid #87758f; /* Nuevo color */
+  width: 80px;
+  height: 80px;
+  max-width: 100px;
+  margin: 20px auto;
+  text-align: center;
+  font-size: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iluminar {
+  animation: iluminar 3s ease-in-out;
+}
+
+@keyframes iluminar {
+  0% {
+    background-color: #a3c3b8; /* Nuevo color */
+  }
+  100% {
+    background-color: #a3c3b8;
+  }
+}
