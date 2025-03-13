@@ -39,7 +39,7 @@
 .next,
 .restart {
   margin: 10px;
-  background-color: #305B50; /* Nuevo color */
+  background-color: #87758f; /* Nuevo color */
   color: white;
   border: none;
   padding: 10px 20px;
@@ -49,5 +49,5 @@
 
 .next:hover,
 .restart:hover {
-  background-color: #1E7C65; /* Nuevo color */
+  background-color: #87758f; /* Nuevo color */
 }

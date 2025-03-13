@@ -6,10 +6,9 @@ import { useState, useEffect } from "react";
 
 // Definir el componente de la tarjeta con estilos
 const CardContainer = styled.div`
-  background-color: white; /* Verde brillante */
+  background-color: #a3c3b8; /* Verde brillante */
   color: black;
   border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
   padding: 20px;
   width: 500px;
   height: 250px;
