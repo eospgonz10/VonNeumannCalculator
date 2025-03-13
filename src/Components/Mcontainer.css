@@ -1,22 +1,20 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* Mcontainer.css */
 .memory-container {
-  background-color: white; /* Verde brillante */
-  color: black;
+  background-color: #1E7C65; /* Nuevo color */
+  color: white; /* Texto blanco para contraste */
   border-radius: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
   padding: 20px;
   max-width: 500px;
-  margin: auto;
+  margin: 20px auto; /* Espacio entre la memoria y los botones */
   text-align: center;
   height: 550px;
 }
+
 .memory-container h4 {
   margin-bottom: 30px;
 }
+
 .content {
   width: 100%;
   height: 60px;
@@ -24,17 +22,17 @@
   flex-direction: row;
   justify-content: space-around;
 }
-.dir img {
-  margin-left: 10px;
-}
+
+.dir img,
 .datos img {
-  margin-right: 10px;
+  margin: 10px;
 }
+
 table,
 td,
 th {
   place-items: center;
-  border: 1px solid black;
+  border: 1px solid #305B50; /* Nuevo color */
   border-collapse: collapse;
 }
 
@@ -42,29 +40,25 @@ th,
 td {
   padding: 0.5em 0.5em;
   text-align: center;
-  color: black;
+  color: white; /* Texto blanco para contraste */
 }
 
 thead tr {
-  background: #01091b;
-  /* linear-gradient(
-    to left top,
-    rgb(130, 213, 246),
-    rgb(55, 139, 254) 
-  );*/
+  background: #305B50; /* Nuevo color */
 }
+
 th {
   color: white;
 }
 
 tbody th {
-  background-color: #e7efff;
+  background-color: #1E7C65; /* Nuevo color */
 }
 
 td {
-  background: linear-gradient(to left top, #caf0ff, #82d5f6);
+  background: #305B50; /* Nuevo color */
 }
 
 td:nth-child(even) {
-  background: #f7faff;
+  background: #1E7C65; /* Nuevo color */
 }

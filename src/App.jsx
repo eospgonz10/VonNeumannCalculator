@@ -128,39 +128,38 @@ function App() {
 
   return (
     <div>
-      <div className="memory">
-        <MContainer
-          vector={vector}
-          content={`${memoria.registroDirecciones}`}
-          content1={`${memoria.registroDatos}`}
-        ></MContainer>
-        <div className="buts">
-          <button className="next" onClick={() => setSiguiente(!siguiente)}>
-            {" "}
-            Siguiente
-          </button>
-          <button className="restart" onClick={() => window.location.reload()}>
-            {" "}
-            Reiniciar
-          </button>
-        </div>
+    {/* Contenedor para UC y ALU */}
+    <div className="procesador">
+      <UControl
+        id="control"
+        contadorPrograma={`${unidadControl.contadorPrograma}`}
+        registroInstrucciones={`${unidadControl.registroInstrucciones}`}
+        decodificador={`${op?.opNombre}`}
+      ></UControl>
+      <AContainer
+        id="alu"
+        acumulador={`${alu.acumulador}`}
+        rEntrada={`${alu.registroEntrada}`}
+      ></AContainer>
+    </div>
 
-        <div className="casa"></div>
-      </div>
-      <div className="procesador">
-        <UControl
-          id="control"
-          contadorPrograma={`${unidadControl.contadorPrograma}`}
-          registroInstrucciones={`${unidadControl.registroInstrucciones}`}
-          decodificador={`${op?.opNombre}`}
-        ></UControl>
-        <AContainer
-          id="alu"
-          acumulador={`${alu.acumulador}`}
-          rEntrada={`${alu.registroEntrada}`}
-        ></AContainer>
+    {/* Contenedor para Memoria y botones */}
+    <div className="memory">
+      <MContainer
+        vector={vector}
+        content={`${memoria.registroDirecciones}`}
+        content1={`${memoria.registroDatos}`}
+      ></MContainer>
+      <div className="buts">
+        <button className="next" onClick={() => setSiguiente(!siguiente)}>
+          Siguiente
+        </button>
+        <button className="restart" onClick={() => window.location.reload()}>
+          Reiniciar
+        </button>
       </div>
     </div>
+  </div>
   );
 }
 export default App;

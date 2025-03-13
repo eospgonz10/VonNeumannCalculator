@@ -1,3 +1,4 @@
+/* App.css */
 * {
   margin: 0;
   padding: 0;
@@ -9,50 +10,44 @@
   text-align: center;
 }
 
+/* Contenedor para UC y ALU */
 .procesador {
   width: 100%;
-  height: 350px;
   display: flex;
+  flex-direction: row; /* UC y ALU en la misma fila */
+  justify-content: space-around; /* Espacio entre UC y ALU */
+  align-items: flex-start; /* Alineación al inicio */
+  margin-bottom: 20px; /* Espacio entre UC/ALU y la memoria */
 }
 
-h1 {
-  padding: 0;
-  color: white;
+/* Contenedor para Memoria y botones */
+.memory {
+  width: 100%;
+  display: flex;
+  flex-direction: column; /* Memoria y botones en columna */
+  align-items: center; /* Centrado horizontal */
+  gap: 20px; /* Espacio entre Memoria y botones */
 }
 
-h3 {
-  font-size: 1em;
-  font-family: "Chonburi", serif;
-}
-h4 {
-  font-size: 2em;
-  font-family: "Chonburi", serif;
-}
-
-.data {
-  width: 100px;
-  height: 25px;
-  border: 1px solid black;
-}
+/* Estilos para los botones */
 .buts {
-  display: block;
-  position: relative;
+  display: flex;
+  justify-content: center; /* Centrar botones horizontalmente */
+  gap: 20px; /* Espacio entre botones */
 }
 
-.next {
-  position: absolute;
-  right: 15%;
-  bottom: 0px;
-  margin: 10px;
-  background-color: #01091b;
-  color: white;
-}
-
+.next,
 .restart {
-  position: absolute;
-  left: 15%;
-  bottom: 0px;
   margin: 10px;
-  background-color: #01091b;
+  background-color: #305B50; /* Nuevo color */
   color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.next:hover,
+.restart:hover {
+  background-color: #1E7C65; /* Nuevo color */
 }

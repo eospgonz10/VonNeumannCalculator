@@ -1,6 +1,7 @@
+/* AContainer.css */
 .Alu {
-  background-color: white;
-  color: black;
+  background-color: #1E7C65; /* Nuevo color */
+  color: white; /* Texto blanco para contraste */
   border-radius: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
   padding: 20px;
@@ -13,7 +14,7 @@
 .content-alu {
   display: flex;
   flex-direction: row;
-  color: black;
+  color: white; /* Texto blanco para contraste */
   align-items: flex-end;
   justify-content: space-evenly;
   height: 20%;
@@ -21,4 +22,10 @@
   max-width: 500px;
   text-align: center;
   padding-right: 40px;
+}
+
+.data {
+  background-color: #305B50; /* Nuevo color */
+  border: 1px solid #1E7C65; /* Nuevo color */
+  color: white; /* Texto blanco para contraste */
 }
