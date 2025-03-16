@@ -20,6 +20,15 @@
   margin-bottom: 20px; /* Espacio entre UC/ALU y la memoria */
 }
 
+.procesador2 {
+  width: 100%;
+  display: flex;
+  flex-direction: row; /* UC y ALU en la misma fila */
+  justify-content: space-around; /* Espacio entre UC y ALU */
+  align-items: flex-start; /* Alineación al inicio */
+  margin-bottom: 20px; /* Espacio entre UC/ALU y la memoria */
+}
+
 /* Contenedor para Memoria y botones */
 .memory {
   width: 100%;
