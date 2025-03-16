@@ -18,6 +18,7 @@ function App() {
   const [siguiente, setSiguiente] = useState(true);
   const [vector, setvector] = useState([""]);
 
+
   //Segunda alu y UC
   const [unidadControl2, setUnidadControl2] = useState(new UnidadControl());
   const [alu2, setAlu2] = useState(new Alu());
@@ -41,6 +42,7 @@ function App() {
   useEffect(() => {
     if (procesoTerminado) return;
     
+    
     // Ejecutar ambas UCs en paralelo
     if (pasoUC1) {
       ejecutarCicloUC1();
@@ -52,14 +54,6 @@ function App() {
     }
     
   }, [siguiente]);
-
-  // Detectar cuando ambas UCs han terminado
-  useEffect(() => {
-    if (!pasoUC1 && op2?.opNombre === "FIN" && !procesoTerminado) {
-      setProcesoTerminado(true);
-      alert(`Procesamiento paralelo completado. El resultado final es: ${alu2.acumulador}`);
-    }
-  }, [pasoUC1, op2, procesoTerminado]);
 
   // Función para ejecutar un ciclo en la UC1
   const ejecutarCicloUC1 = () => {
@@ -171,6 +165,7 @@ function App() {
         if (op?.opNombre === "...") {
           console.log("UC1: Fin de la ejecución");
           setPasoUC1(false);
+          alert(`Fin de la ejecución. El resultado es: ${alu.acumulador}`); // Mostrar el banner cuando la ejecución finaliza
           // No mostramos alerta aquí, ya que ahora se maneja en el useEffect
           break;
         }
@@ -272,7 +267,7 @@ function App() {
 
       case 6:
         // Almacenar resultado parcial en memoria
-        const tmpArray = [...memoria.contenido];
+        { const tmpArray = [...memoria.contenido];
         tmpArray[5] = alu2.acumulador;
         setMemoria((prevMemoria) => ({
           ...prevMemoria,
@@ -282,38 +277,42 @@ function App() {
         // Ahora mostramos que vamos a realizar la potencia final
         setOp2({ opNombre: "^" });
         setContador2((contador2 + 1) % 8);
-        break;
+        break; }
 
-      case 7:
-        // Calcular resultado final: ((2^2)+2)^2 (elevar 6 al cuadrado)
-        setAlu2((prevObj) => {
-          const nuevoObj = Object.create(Object.getPrototypeOf(prevObj));
-          const resultado = Math.pow(prevObj.acumulador, 2);
-          console.log("UC2: Potencia de ((2^2)+2)^2 =", resultado);
-          return Object.assign(nuevoObj, prevObj, {
-            acumulador: resultado
+        case 7:
+          // Calcular resultado final: ((2^2)+2)^2 (elevar 6 al cuadrado)
+          { setAlu2((prevObj) => {
+            const nuevoObj = Object.create(Object.getPrototypeOf(prevObj));
+            const resultado = Math.pow(prevObj.acumulador, 2);
+            console.log("UC2: Potencia de ((2^2)+2)^2 =", resultado);
+            return Object.assign(nuevoObj, prevObj, {
+              acumulador: resultado
+            });
           });
-        });
+          
+          // Almacenar el resultado final en la memoria
+          const tmpMemoria = [...memoria.contenido];
+          tmpMemoria[6] = alu2.acumulador;
+          setMemoria((prevMemoria) => ({
+            ...prevMemoria,
+            contenido: tmpMemoria
+          }));
+          
+          console.log("UC2: Resultado final almacenado:", alu2.acumulador);
+          
+          // Marcar que UC2 ha terminado
+          setOp2({ opNombre: "S" });
         
-        // Almacenar el resultado final en la memoria
-        const tmpMemoria = [...memoria.contenido];
-        tmpMemoria[6] = alu2.acumulador;
-        setMemoria((prevMemoria) => ({
-          ...prevMemoria,
-          contenido: tmpMemoria
-        }));
-        
-        console.log("UC2: Resultado final almacenado:", alu2.acumulador);
-        
-        // Marcar que UC2 ha terminado
-        setOp2({ opNombre: "FIN" });
-        
-        // No mostrar alerta aquí, dejar que el useEffect se encargue
-        
-        // Resetear potenciaDetectada pero mantener contador2 en 0
-        setPotenciaDetectada(false);
-        setContador2(0);
-        break;
+          // Mostrar alerta si ambas UC han terminado
+          if (!pasoUC1 && op2?.opNombre === "FIN") {
+            alert("Fin de la ejecución");
+          }
+          
+          
+          // Resetear potenciaDetectada pero mantener contador2 en 0
+          setPotenciaDetectada(false);
+          setContador2(0);
+          break; }
     }
   };
 
@@ -367,6 +366,7 @@ function App() {
           </button>
         </div>
       </div>
+      
       
       {/* Indicador de estado */}
       <div style={{ textAlign: 'center', margin: '10px', padding: '10px', backgroundColor: '#e3edd2', borderRadius: '5px' }}>
